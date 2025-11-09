@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudentStay - Book Student Rooms Near Your College</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="logo">
+          <img
+            src="images/StudentStay-removebg-preview.png"
+            alt="StudentStay"
+          />
+          <span>StudentStay</span>
+        </div>
+        <div class="nav-links">
+          <a href="#" onclick="navigateToHome(); return false;">Home</a>
+          <a
+            href="#properties"
+            onclick="navigateToMainSection('properties'); return false;"
+            >Rooms</a
+          >
+          <a
+            href="#how"
+            id="nav-how-it-works"
+            onclick="navigateToMainSection('how'); return false;"
+            >How it Works</a
+          >
+          <a href="#contact-us">Contact</a>
+        </div>
+        <div class="auth-buttons" id="auth-buttons-container">
+          <button
+            class="btn btn-outline"
+            id="login-register-btn"
+            onclick="openModal('login')"
+          >
+            Login/Register
+          </button>
+
+          <div
+            class="user-dropdown-container"
+            id="user-dropdown-container"
+            style="position: relative; display: none"
+          >
+            <button
+              class="btn btn-outline user-profile-btn"
+              id="user-profile-btn"
+              onclick="toggleDropdown(event)"
+            >
+              <span id="user-display-name">Guest</span>
+            </button>
+            <div
+              class="dropdown-menu"
+              id="user-menu"
+              style="
+                position: absolute;
+                right: 0;
+                background: white;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                width: 180px;
+                z-index: 1001;
+                display: none;
+                margin-top: 5px;
+                overflow: hidden;
+              "
+            >
+              <a
+                href="#user-dashboard"
+                class="dropdown-item"
+                onclick="showUserAccount('profile'); toggleDropdown(event); return false;"
+                style="
+                  display: block;
+                  padding: 10px 15px;
+                  text-decoration: none;
+                  color: #333;
+                  border-bottom: 1px solid #eee;
+                "
+                >Profile Details</a
+              >
+              <a
+                href="#user-dashboard"
+                class="dropdown-item"
+                onclick="showUserAccount('dashboard'); toggleDropdown(event); return false;"
+                style="
+                  display: block;
+                  padding: 10px 15px;
+                  text-decoration: none;
+                  color: #333;
+                  border-bottom: 1px solid #eee;
+                "
+                >Dashboard</a
+              >
+              <a
+                href="#"
+                class="dropdown-item"
+                onclick="handleLogout(); return false;"
+                style="
+                  display: block;
+                  padding: 10px 15px;
+                  text-decoration: none;
+                  color: #d9534f;
+                  border-radius: 0 0 6px 6px;
+                "
+                >Logout</a
+              >
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('listProperty')">
+            List Your Property
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <section class="hero" id="home">
+      <h1 style="text-shadow: 0 0 10px #93adc5, 0 0 10px #000000">
+        India's Most Trusted Student Housing
+      </h1>
+      <p style="text-shadow: 0 0 10px #5c62bb, 0 0 10px #000000">
+        Find verified PG accommodations & rooms within minutes
+      </p>
+      <form class="search-container" onsubmit="handleSearch(event)">
+        <div class="search-bar">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search by college name, area, or city..."
+          />
+          <button type="submit">Search</button>
+        </div>
+        <div class="popular-cities">
+          <span class="city-tag" onclick="searchByTag('Rajahmundry')"
+            >Rajahmundry</span
+          >
+          <span class="city-tag" onclick="searchByTag('Kakinada')"
+            >Kakinada</span
+          >
+          <span class="city-tag" onclick="searchByTag('Vizag')">Vizag</span>
+          <span class="city-tag" onclick="searchByTag('Vijayawada')"
+            >Vijayawada</span
+          >
+          <span class="city-tag" onclick="searchByTag('Hyderabad')"
+            >Hyderabad</span
+          >
+        </div>
+      </form>
+    </section>
+
+    <section class="how-it-works" id="how">
+      <h2>How It Works</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Search</h3>
+          <p>Enter your college name or preferred area to find nearby rooms</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Compare</h3>
+          <p>
+            Browse through verified listings with photos, prices, and amenities
+          </p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Book Securely</h3>
+          <p>
+            Confirm your choice and secure your accommodation instantly by
+            paying the deposit through our integrated, secure payment gateway.
+          </p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3>Move In</h3>
+          <p>
+            Complete paperwork, move into your verified safe space, and focus on
+            your studies.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="properties" id="properties">
+      <div class="properties-container">
+        <h2>Featured Rooms & PGs</h2>
+        <div class="properties-grid" id="properties-grid"></div>
+      </div>
+    </section>
+
+    <section
+      id="user-dashboard"
+      class="container hidden"
+      style="min-height: 50vh; padding-top: 5rem; padding-bottom: 5rem"
+    ></section>
+
+    <section
+      class="booking-confirmation-page hidden"
+      id="booking-confirmation-page"
+    >
+      <div class="confirmation-content">
+        <h2 class="success-header">🎉 Booking Confirmed!</h2>
+        <p class="sub-header">Your room has been successfully reserved.</p>
+        <div class="details-card">
+          <h3>Booking Details</h3>
+          <div class="detail-item">
+            <span class="label">Property Name:</span>
+            <span class="value" id="booking-property-name"></span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Sharing Type:</span>
+            <span class="value" id="booking-sharing-type"></span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Booked By:</span>
+            <span class="value" id="booking-user-name"></span>
+          </div>
+          <div class="detail-item total-price">
+            <span class="label">Advance Payment:</span>
+            <span class="value" id="booking-advance-payment"></span>
+          </div>
+        </div>
+        <div class="next-steps">
+          <p>What happens next?</p>
+          <ul>
+            <li>
+              A detailed confirmation email has been sent to your registered ID.
+            </li>
+            <li>Your Property Manager will contact you within 24 hours.</li>
+            <li>Your room is secured for 7 days with the advance payment.</li>
+          </ul>
+        </div>
+        <button
+          class="btn btn-primary"
+          onclick="renderProperties(propertiesData); window.location.hash='#properties';"
+        >
+          Browse More Rooms
+        </button>
+      </div>
+    </section>
+
+    <div id="bookingDetailsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="booking-modal-title">Confirm Booking</h2>
+          <span class="close" onclick="closeModal('bookingDetails')"
+            >&times;</span
+          >
+        </div>
+        <form onsubmit="confirmBooking(event)">
+          <input type="hidden" id="modal-property-name" value="" />
+          <input type="hidden" id="modal-sharing-type" value="" />
+          <input type="hidden" id="modal-advance-payment" value="" />
+
+          <div class="form-group">
+            <label>Your Full Name</label>
+            <input
+              type="text"
+              required
+              id="booking-name-input"
+              placeholder="Enter your name"
+            />
+          </div>
+          <div class="form-group">
+            <label>Number of Persons</label>
+            <select required id="booking-persons-select">
+              <option value="1">1 Person (Single Booking)</option>
+              <option value="2">2 Persons</option>
+              <option value="3">3 Persons</option>
+              <option value="4">4 Persons</option>
+            </select>
+          </div>
+
+          <div class="payment-summary">
+            <p>
+              <strong>Advance Payment Required:</strong>
+              <span
+                id="modal-display-advance-payment"
+                style="color: #d9534f; font-weight: bold"
+                >₹0</span
+              >
+            </p>
+            <p style="font-size: 0.9em; color: #666">
+              (This is the deposit to secure your room. The final payment step
+              is skipped for this demo.)
+            </p>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Confirm & Proceed (Demo Skip Payment)
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="listPropertyModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>List Your Property</h2>
+          <span class="close" onclick="closeModal('listProperty')"
+            >&times;</span
+          >
+        </div>
+        <form onsubmit="handleListPropertySubmission(event)">
+          <div class="form-group">
+            <label>Owner Full Name</label>
+            <input
+              type="text"
+              required
+              placeholder="John Doe"
+              id="list-owner-name"
+            />
+          </div>
+          <div class="form-group">
+            <label>Property Name</label>
+            <input
+              type="text"
+              required
+              placeholder="RK PG, Rajahmundry"
+              id="list-property-name"
+            />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              required
+              placeholder="your.email@example.com"
+              id="list-email"
+            />
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input
+              type="tel"
+              required
+              placeholder="+91 XXXXX XXXXX"
+              id="list-phone"
+            />
+          </div>
+          <div class="form-group">
+            <label>Location or City</label>
+            <input
+              type="text"
+              required
+              placeholder="Rajahmundry or Near BVC College"
+              id="list-location"
+            />
+          </div>
+          <p
+            style="
+              text-align: center;
+              margin-bottom: 1.5rem;
+              color: #333;
+              font-weight: 500;
+            "
+          >
+            We will contact you within 24 hours to proceed with listing.
+          </p>
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Submit for Listing
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Welcome Back!</h2>
+          <span class="close" onclick="closeModal('login')">&times;</span>
+        </div>
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label>Email or Phone</label>
+            <input
+              type="text"
+              required
+              placeholder="Enter your email or phone"
+              id="login-email-phone"
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              required
+              placeholder="Enter your password"
+              id="login-password"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Login
+          </button>
+        </form>
+        <div class="modal-footer">
+          <p>
+            Don't have an account?
+            <a href="#" onclick="switchModal('login', 'register')"
+              >Register here</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Create Account</h2>
+          <span class="close" onclick="closeModal('register')">&times;</span>
+        </div>
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label>I am a</label>
+            <select required id="register-role">
+              <option value="Student">Student (Looking for Room)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              required
+              placeholder="John Doe"
+              id="register-name"
+            />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              required
+              placeholder="your.email@example.com"
+              id="register-email"
+            />
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input
+              type="tel"
+              required
+              placeholder="+91 XXXXX XXXXX"
+              id="register-phone"
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              required
+              placeholder="Create a password"
+              id="register-password"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Register
+          </button>
+        </form>
+        <div class="modal-footer">
+          <p>
+            Already have an account?
+            <a href="#" onclick="switchModal('register', 'login')"
+              >Login here</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <footer id="contact-us">
+      <div class="footer-links">
+        <a href="#about">About Us</a>
+        <a href="#terms">Terms & Conditions</a>
+        <a href="#privacy">Privacy Policy</a>
+        <a href="#contact">Contact Us</a>
+        <p>Mail id: info@studentstay.com</p>
+        <p>contact: +91 9666406656</p>
+      </div>
+      <p>&copy; 2025 StudentStay. All rights reserved.</p>
+      <p>Connecting students with verified room accommodations</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+      // Initialize the page and dynamic content when loaded
+      document.addEventListener("DOMContentLoaded", initializePage);
+    </script>
+  </body>
+</html>
