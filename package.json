@@ -1,17 +1,23 @@
 {
-  "name": "full-stack-copy",
+  "name": "studentstay",
   "version": "1.0.0",
-  "description": "",
+  "description": "Connecting students with verified room accommodations",
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "npm rebuild sqlite3 --build-from-source"
   },
-  "keywords": [],
+  "keywords": [
+    "student",
+    "accommodation",
+    "pg",
+    "hostel"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^17.2.3",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "sqlite3": "^5.1.7"
   }

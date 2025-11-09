@@ -8,9 +8,9 @@ const sqlite3 = require("sqlite3").verbose();
 // [FIX FOR RENDER] Point the database file to the writeable /tmp directory
 const DB_PATH =
   process.env.NODE_ENV === "production"
-    ? "/tmp/studentstay.db"
-    : "./studentstay.db";
-
+    ? "/tmp/studentstay.db" // Use /tmp directory in production
+    : "./studentstay.db"; // Use local directory in development
+require("dotenv").config();
 const db = new sqlite3.Database(DB_PATH);
 const app = express();
 const PORT = process.env.PORT || 3000;
