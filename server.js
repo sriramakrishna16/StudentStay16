@@ -12,7 +12,6 @@ const DB_PATH =
     : "./studentstay.db";
 
 const db = new sqlite3.Database(DB_PATH);
-require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 // --- 1. SQLITE DATABASE INITIALIZATION ---
