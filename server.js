@@ -5,7 +5,13 @@ const path = require("path");
 // [CHANGE 1]: Use sqlite3 driver
 const sqlite3 = require("sqlite3").verbose();
 // [CHANGE 2]: The database is a single file created in your project folder
-const db = new sqlite3.Database("./studentstay.db");
+// [FIX FOR RENDER] Point the database file to the writeable /tmp directory
+const DB_PATH =
+  process.env.NODE_ENV === "production"
+    ? "/tmp/studentstay.db"
+    : "./studentstay.db";
+
+const db = new sqlite3.Database(DB_PATH);
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
