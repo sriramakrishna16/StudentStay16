@@ -10,7 +10,7 @@ const DB_PATH =
   process.env.NODE_ENV === "production"
     ? "/tmp/studentstay.db" // Use /tmp directory in production
     : "./studentstay.db"; // Use local directory in development
-require("dotenv").config();
+require("dotenv").config(); // KEEPING THIS LINE as requested
 const db = new sqlite3.Database(DB_PATH);
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -175,6 +175,43 @@ const propertiesData = [
 
 // --- 4. API ROUTES (UPDATED FOR SQLITE) ---
 
+// *************************************************************************
+// *** WARNING: TEMPORARY ADMIN ROUTES - DELETE IMMEDIATELY AFTER USE! ***
+// *************************************************************************
+
+const ADMIN_KEY = "Sriram@7173"; // <--- ⚠️ CHANGE THIS PASSWORD! ⚠️
+
+// 1. GET ALL USERS (Admin View)
+app.get(`/api/admin/users/${ADMIN_KEY}`, (req, res) => {
+  // Selects all columns from the users table (excluding password in the SELECT list for extra safety)
+  db.all(
+    `SELECT id, name, email, phone, role, registrationDate FROM users`,
+    [],
+    (err, rows) => {
+      if (err) {
+        console.error("Admin Users Error:", err.message);
+        return res.status(500).json({ message: "Failed to fetch all users." });
+      }
+      // Returns the data in JSON format
+      res.status(200).json({ users: rows });
+    }
+  );
+});
+
+// 2. GET ALL BOOKINGS (Admin View)
+app.get(`/api/admin/bookings/${ADMIN_KEY}`, (req, res) => {
+  // Selects all columns from the bookings table
+  db.all(`SELECT * FROM bookings`, [], (err, rows) => {
+    if (err) {
+      console.error("Admin Bookings Error:", err.message);
+      return res.status(500).json({ message: "Failed to fetch all bookings." });
+    }
+    res.status(200).json({ bookings: rows });
+  });
+});
+
+// *************************************************************************
+
 // GET: Property Data
 app.get("/api/properties", (req, res) => {
   res.json(propertiesData);
@@ -271,8 +308,8 @@ app.get("/api/users/:userId", (req, res) => {
 
   db.get(
     `SELECT name, email, phone, role
-     FROM users
-     WHERE id = ?`,
+      FROM users
+      WHERE id = ?`,
     [userId],
     (err, user) => {
       if (err) {
@@ -306,7 +343,7 @@ app.post("/api/bookings", (req, res) => {
   // [CHANGE 6]: Use db.run for INSERT
   db.run(
     `INSERT INTO bookings (user_id, user_name, property_name, sharing_type, num_persons, advance_payment) 
-         VALUES (?, ?, ?, ?, ?, ?)`,
+          VALUES (?, ?, ?, ?, ?, ?)`,
     [userId, userName, propertyName, sharingType, numPersons, advancePayment],
     function (err) {
       if (err) {
@@ -333,9 +370,9 @@ app.get("/api/users/:userId/bookings", (req, res) => {
   // [CHANGE 7]: Use db.all() for multiple rows lookup
   db.all(
     `SELECT id AS _id, property_name, sharing_type, num_persons, advance_payment, booking_date, status 
-         FROM bookings 
-         WHERE user_id = ? 
-         ORDER BY booking_date DESC`,
+          FROM bookings 
+          WHERE user_id = ? 
+          ORDER BY booking_date DESC`,
     [userId],
     (err, bookings) => {
       if (err) {
